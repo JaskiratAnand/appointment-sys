@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Status {
+  BOOKED
+  CANCELED
+  COMPLETED
+}
+
+model Student {
+  id      String   @id @default(uuid())
+  email   String   @unique
+  name    String
+  password String
+  appointments Appointment[]
+}
+
+model Professor {
+  id      String   @id @default(uuid())
+  email   String   @unique
+  name    String
+  password String
+  timeSlots TimeSlot[]
+  appointments Appointment[]
+}
+
+model TimeSlot {
+  id         String   @id @default(uuid())
+  professor  Professor     @relation(fields: [professorId], references: [id], onDelete: Cascade)
+  professorId String
+  start   DateTime
+  end     DateTime
+  isBooked Boolean @default(false)
+  appointment Appointment[]
+}
+
+model Appointment {
+  id      String    @id @default(uuid())
+  student    Student    @relation(fields: [studentId], references: [id])
+  studentId  String
+  professor  Professor    @relation(fields: [professorId], references: [id])
+  professorId String
+  timeSlot   TimeSlot   @relation(fields: [timeSlotId], references: [id])
+  timeSlotId String
+  status     Status   @default(BOOKED)
+}
