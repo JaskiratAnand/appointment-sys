@@ -31,7 +31,7 @@ router.post("/signup", async (req, res) => {
             return res.status(409).json({ message: "Professor profile already exists" });
         }
         if (studentExists) {
-            return res.status(404).json({ message: "Account linked to student profile" });
+            return res.status(409).json({ message: "Account linked to student profile" });
         }
 
         const hashedPassword: string = await bcrypt.hash(body.password, 10);
@@ -110,7 +110,7 @@ router.get("/", async (req, res) => {
                 name: true
             }
         });
-        return res.status(200).json(professors);
+        return res.status(200).json({ professors });
     } catch (err) {
         return res.status(500).json({ error: "error while fetching professors" });
     } finally {

@@ -28,8 +28,8 @@ router.use('/*', async (req, res, next) => {
             return res.status(403).json({ message: "Invalid token"})
         }
     } catch (err) {
-        console.error("JWT verification failed:", err);
-        return res.status(403).json({ message: "you are not logged in"})
+        console.error("JWT verification failed: invalid token");
+        return res.status(403).json({ message: "you are not logged in or invalid token"})
     }
 });
 
@@ -48,6 +48,19 @@ router.post("/timeslots", async (req, res) => {
     }
 
     try {
+        const existingTimeslot = await prisma.timeSlot.findFirst({
+            where: {
+                AND: [
+                    { professorId: id },
+                    { start: new Date(startTime) },
+                    { end: new Date(endTime) }
+                ]
+            }
+        });
+        if (existingTimeslot) {
+            return res.status(400).json({ message: "Time slot already exists" });
+        }
+
         const timeslot = await prisma.timeSlot.create({
             data: {
                 start: new Date(startTime),
@@ -79,7 +92,8 @@ router.get("/timeslots/:professorId", async (req, res) => {
     try {
         const timeslots = await prisma.timeSlot.findMany({
             where: {
-                professorId: professorId
+                professorId: professorId,
+                isBooked: false
             }
         });
         return res.status(200).json({
