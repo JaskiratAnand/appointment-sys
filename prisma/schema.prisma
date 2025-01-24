@@ -48,11 +48,11 @@ model TimeSlot {
 
 model Appointment {
   id      String    @id @default(uuid())
-  student    Student    @relation(fields: [studentId], references: [id])
+  student    Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId  String
-  professor  Professor    @relation(fields: [professorId], references: [id])
+  professor  Professor    @relation(fields: [professorId], references: [id], onDelete: Cascade)
   professorId String
-  timeSlot   TimeSlot   @relation(fields: [timeSlotId], references: [id])
+  timeSlot   TimeSlot   @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
   timeSlotId String
   status     Status   @default(BOOKED)
 }

@@ -18,4 +18,3 @@ export interface createTimeSlot {
     startTime: Date;
     endTime: Date;
 }
-

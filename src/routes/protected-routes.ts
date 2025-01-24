@@ -172,7 +172,6 @@ router.get("/appointment", async (req, res) => {
     const prisma = new PrismaClient();
 
     const { id, role } = req.body;
-    
     try {
         const appointments = await prisma.appointment.findMany({
             where: {
